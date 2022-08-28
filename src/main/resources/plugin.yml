@@ -1,0 +1,18 @@
+name: CSSBuildCompetition
+main: com.cssbham.cssbuildcompetition.BuildCompetitionPlugin
+version: "${version}"
+author: "LMBishop"
+api-version: 1.19
+depend:
+  - PlotSquared
+
+commands:
+  team:
+    usage: /<command>
+    description: Join or leave a team
+  buildcompetitionadmin:
+    usage: /<command>
+    description: Admin commands for the build competition
+    permission: buildcompetition.admin
+    aliases:
+      - bca

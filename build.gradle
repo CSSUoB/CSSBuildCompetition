@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'com.cssbham.cssbuildcompetition'
+version '1.0-SNAPSHOT'
+
+defaultTasks 'build'
+
+processResources {
+    duplicatesStrategy = 'include'
+    from(sourceSets.main.resources.srcDirs) {
+        include 'plugin.yml'
+        expand('version': project.version)
+    }
+}
+
+repositories {
+    // Paper
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+
+    // PlotSquared (build this one yourself)
+    mavenLocal()
+}
+
+dependencies {
+    // Paper
+    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
+
+    // PlotSquared
+    compileOnly('com.plotsquared:PlotSquared-Bukkit:6.9.3') {
+        transitive = false
+    }
+    compileOnly('com.plotsquared:PlotSquared-Core:6.9.3') {
+        transitive = false
+    }
+}

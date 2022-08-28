@@ -1,0 +1,7 @@
+options:
+  ==: com.cssbham.cssbuildcompetition.game.Options
+  plotworld: "plotworld"
+  theme: "TeX"
+  voteTime: 30
+  buildTime: 600
+  maxTeamSize: 2
