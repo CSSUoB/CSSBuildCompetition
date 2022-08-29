@@ -96,17 +96,20 @@ public class TeamCommand implements TabExecutor {
             return;
         }
 
-        Team team;
+        if (competition.isPlayerInCompetition(player.getUniqueId())) {
+            player.sendMessage(Component.text("You are already in a team.", NamedTextColor.RED));
+            return;
+        }
+
         if (args.length < 2) {
-            team = competition.getTeamManager().addPlayerToAvailableTeam(player.getUniqueId());
+            competition.getTeamManager().addPlayerToAvailableTeam(player.getUniqueId());
         } else {
             String playerName = args[1];
             Player otherPlayer = plugin.getServer().getPlayer(playerName);
             if (otherPlayer == null) {
                 player.sendMessage(Component.text("Player not found.", NamedTextColor.RED));
-                return;
             } else {
-                team = competition.getTeamManager().getTeamOfPlayer(otherPlayer.getUniqueId());
+                Team team = competition.getTeamManager().getTeamOfPlayer(otherPlayer.getUniqueId());
                 if (team == null) {
                     player.sendMessage(Component.text(otherPlayer.getName() + " is not in a team.", NamedTextColor.RED));
                 } else if (team.getPlayers().size() >= team.getLimit()) {
@@ -115,9 +118,6 @@ public class TeamCommand implements TabExecutor {
                     team.addPlayer(player.getUniqueId());
                 }
             }
-        }
-        if (team == null) {
-            player.sendMessage(Component.text("You are already in a team.", NamedTextColor.RED));
         }
     }
 
