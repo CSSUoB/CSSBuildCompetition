@@ -84,8 +84,8 @@ public final class ResultPhase extends Phase {
     public void end() {
         Component message = MessageHelper.decorateScoreboard(scoreboard);
 
-        Sound sound = Sound.sound(Key.key("entity.item.pickup"),
-                Sound.Source.NEUTRAL, 2, 2);
+        Sound sound = Sound.sound(Key.key("block.note_block.chime"),
+                Sound.Source.NEUTRAL, 2, 0.5f);
         for (UUID uuid : teamManager.getPlayerRegistry().getPlayers()) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {

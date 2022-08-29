@@ -37,20 +37,21 @@ public final class VotePhase extends Phase {
 
     private final TeamManager teamManager;
     private final PlotArea plotArea;
-    private final long duration;
+    private final long durationPerVote;
 
     private final Map<UUID, Integer> castVotes;
     private final Map<UUID, BossBar> bossbars;
     private final Queue<Team> upcomingTeams;
     private Team currentTeam;
     private long votingEndTime;
+    private long delayEndTime;
 
     public VotePhase(TeamManager teamManager, Options options) {
         super("vote");
 
         this.teamManager = teamManager;
         this.plotArea = PlotSquared.get().getPlotAreaManager().getPlotArea(options.getPlotworld(), null);
-        this.duration = TimeUnit.MILLISECONDS.convert(options.getVoteTime(), TimeUnit.SECONDS);
+        this.durationPerVote = TimeUnit.MILLISECONDS.convert(options.getVoteTime(), TimeUnit.SECONDS);
 
         this.castVotes = new HashMap<>();
         this.bossbars = new HashMap<>();
@@ -133,10 +134,32 @@ public final class VotePhase extends Phase {
         currentTeam = null;
         upcomingTeams.addAll(teamManager.getTeams());
 
+        Component message = Component.newline()
+                .append(Component.text("Time to vote!", NamedTextColor.GREEN, TextDecoration.BOLD))
+                .append(Component.newline())
+                .append(Component.newline())
+                .append(Component.text("You have ", NamedTextColor.GREEN))
+                .append(Component.text(TimeFormat.convertToHumanReadableTime(durationPerVote), NamedTextColor.WHITE))
+                .append(Component.text(" per team to vote from ", NamedTextColor.GREEN))
+                .append(Component.text("1 to 5", NamedTextColor.WHITE))
+                .append(Component.text(" by right-clicking the option in your hand.", NamedTextColor.GREEN))
+//                .append(Component.newline())
+//                .append(Component.text("Please try to vote fairly for each team to keep the competition fun.", NamedTextColor.GRAY))
+                .append(Component.newline())
+                .append(Component.newline())
+                .append(Component.text("Good luck!", NamedTextColor.GREEN))
+                .append(Component.newline());
         for (UUID uuid : teamManager.getPlayerRegistry().getPlayers()) {
             bossbars.put(uuid, BossBar.bossBar(Component.text("XX remaining"),
                     1, BossBar.Color.PURPLE, BossBar.Overlay.NOTCHED_10));
+
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.sendMessage(message);
+            }
         }
+
+        this.delayEndTime = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(8, TimeUnit.SECONDS);
     }
 
     @Override
@@ -151,6 +174,11 @@ public final class VotePhase extends Phase {
 
     @Override
     public boolean tick() {
+        long delayRemaining = delayEndTime - System.currentTimeMillis();
+        if (delayRemaining > 0) {
+            return false;
+        }
+
         long timeRemaining = votingEndTime - System.currentTimeMillis();
         if (timeRemaining <= 0) {
             if (currentTeam != null) {
@@ -170,7 +198,7 @@ public final class VotePhase extends Phase {
                 Player player = Bukkit.getPlayer(uuid);
                 if (player != null) {
                     BossBar bossbar = bossbars.get(uuid);
-                    bossbar.progress((float) recalculatedTimeRemaining / duration);
+                    bossbar.progress((float) recalculatedTimeRemaining / durationPerVote);
                     if (!castVotes.containsKey(uuid)) {
                         if (currentTeam.getPlayers().contains(uuid)) {
                             bossbar.name(currentTeamMessage);
@@ -194,7 +222,7 @@ public final class VotePhase extends Phase {
             return false;
         } else {
             currentTeam = next;
-            votingEndTime = System.currentTimeMillis() + duration;
+            votingEndTime = System.currentTimeMillis() + durationPerVote;
             teleportPlayersToVote(currentTeam);
             return true;
         }

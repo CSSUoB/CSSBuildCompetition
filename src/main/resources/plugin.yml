@@ -13,6 +13,9 @@ commands:
   competition:
     usage: /<command>
     description: Use competition commands
+    aliases:
+      - c
+      - comp
   buildcompetitionadmin:
     usage: /<command>
     description: Admin commands for the build competition

@@ -60,7 +60,7 @@ public class CompetitionCommand implements TabExecutor {
             return Collections.emptyList();
         }
         if (args.length == 1) {
-            TabHelper.matchTabComplete(args[0], plugin.getCompetition().getCommandRouter().getCommands().keySet().stream().toList());
+            return TabHelper.matchTabComplete(args[0], plugin.getCompetition().getCommandRouter().getCommands().keySet().stream().toList());
         }
         //TODO command tab delegation
         return Collections.emptyList();

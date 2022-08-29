@@ -16,6 +16,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -50,6 +51,23 @@ public final class BuildPhase extends Phase implements CommandHandler {
         timer = BossBar.bossBar(Component.text("XX remaining"),
                 1, BossBar.Color.PURPLE, BossBar.Overlay.NOTCHED_10);
 
+        Component message = Component.newline()
+                .append(Component.text("Time to build!", NamedTextColor.GREEN, TextDecoration.BOLD))
+                .append(Component.newline())
+                .append(Component.newline())
+                .append(Component.text("You have ", NamedTextColor.GREEN))
+                .append(Component.text(TimeFormat.convertToHoursMinutes(duration), NamedTextColor.WHITE))
+                .append(Component.text(" to build according to the theme: ", NamedTextColor.GREEN))
+                .append(Component.text(theme, NamedTextColor.WHITE))
+                .append(Component.text(".", NamedTextColor.GREEN))
+                .append(Component.newline())
+                .append(Component.text("At any point you may use ", NamedTextColor.GRAY))
+                .append(Component.text("/c home", NamedTextColor.WHITE))
+                .append(Component.text(" to return to your plot.", NamedTextColor.GRAY))
+                .append(Component.newline())
+                .append(Component.newline())
+                .append(Component.text("Good luck!", NamedTextColor.GREEN))
+                .append(Component.newline());
         Sound sound = Sound.sound(Key.key("block.note_block.pling"),
                 Sound.Source.NEUTRAL, 2, 2);
         Title title = Title.title(Component.text("Start building!", NamedTextColor.GREEN),
@@ -69,6 +87,7 @@ public final class BuildPhase extends Phase implements CommandHandler {
                         player.teleport(PlotSquaredHelper.convertPlotSquaredLocationToBukkitLocation(centre));
                         player.showTitle(title);
                         player.playSound(sound, Sound.Emitter.self());
+                        player.sendMessage(message);
                     }
                 }
             });
