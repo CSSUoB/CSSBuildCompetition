@@ -10,6 +10,9 @@ commands:
   team:
     usage: /<command>
     description: Join or leave a team
+  competition:
+    usage: /<command>
+    description: Use competition commands
   buildcompetitionadmin:
     usage: /<command>
     description: Admin commands for the build competition

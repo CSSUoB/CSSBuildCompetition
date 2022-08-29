@@ -15,13 +15,13 @@ public class TimeFormat {
 
         StringBuilder sb = new StringBuilder();
         if (h > 0) {
-            sb.append(h).append(" hour").append(h > 1 ? "s " : " ");
+            sb.append(h).append(" hour").append(h != 1 ? "s " : " ");
         }
         if (h > 0 || m > 0) {
-            sb.append(m).append(" minute").append(m > 1 ? "s " : " ");
+            sb.append(m).append(" minute").append(m != 1 ? "s " : " ");
         }
         if (h == 0) {
-            sb.append(s).append(" second").append(s > 1 ? "s" : "");
+            sb.append(s).append(" second").append(s != 1 ? "s" : "");
         }
         return sb.toString();
     }

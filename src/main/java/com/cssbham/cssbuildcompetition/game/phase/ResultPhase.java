@@ -1,5 +1,6 @@
 package com.cssbham.cssbuildcompetition.game.phase;
 
+import com.cssbham.cssbuildcompetition.BuildCompetitionPlugin;
 import com.cssbham.cssbuildcompetition.game.Options;
 import com.cssbham.cssbuildcompetition.game.team.Team;
 import com.cssbham.cssbuildcompetition.game.team.TeamManager;
@@ -83,12 +84,16 @@ public final class ResultPhase extends Phase {
     public void end() {
         Component message = MessageHelper.decorateScoreboard(scoreboard);
 
+        Sound sound = Sound.sound(Key.key("entity.item.pickup"),
+                Sound.Source.NEUTRAL, 2, 2);
         for (UUID uuid : teamManager.getPlayerRegistry().getPlayers()) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
                 player.sendMessage(message);
+                player.playSound(sound, Sound.Emitter.self());
             }
         }
+        Bukkit.getConsoleSender().sendMessage(message);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.cssbham.cssbuildcompetition.game;
 
 import com.cssbham.cssbuildcompetition.BuildCompetitionPlugin;
+import com.cssbham.cssbuildcompetition.game.command.CommandRouter;
 import com.cssbham.cssbuildcompetition.game.phase.*;
 import com.cssbham.cssbuildcompetition.game.team.TeamManager;
 import com.cssbham.cssbuildcompetition.game.team.player.PlayerRegistry;
@@ -24,6 +25,7 @@ public class Competition {
     private Phase currentPhase;
     private final PlayerRegistry playerRegistry;
     private final TeamManager teamManager;
+    private final CommandRouter commandRouter;
 
     private BukkitRunnable phaseTicker;
     private boolean running;
@@ -32,6 +34,7 @@ public class Competition {
         this.plugin = plugin;
 
         this.playerRegistry = new PlayerRegistry();
+        this.commandRouter = new CommandRouter();
         this.teamManager = new TeamManager(playerRegistry, plotArea, options.getMaxTeamSize());
 
         upcomingPhases = new LinkedList<>();
@@ -87,6 +90,15 @@ public class Competition {
      */
     public @NotNull Collection<Phase> getUpcomingPhases() {
         return Collections.unmodifiableCollection(upcomingPhases);
+    }
+
+    /**
+     * Gets the command router for competition commands.
+     *
+     * @return the command router
+     */
+    public CommandRouter getCommandRouter() {
+        return commandRouter;
     }
 
     /**
@@ -146,9 +158,11 @@ public class Competition {
             } else {
                 plugin.getLogger().info(String.format("Changing phase from \"%s\" -> \"%s\"", currentPhase.getName(), phase.getName()));
             }
+            commandRouter.unregisterCommands();
             phase.start();
-            currentPhase = phase;
+            phase.registerCommands(commandRouter);
             Bukkit.getPluginManager().registerEvents(phase, plugin);
+            currentPhase = phase;
             return phase;
         } else {
             plugin.getLogger().info(String.format("Ending phase \"%s\"", currentPhase.getName()));

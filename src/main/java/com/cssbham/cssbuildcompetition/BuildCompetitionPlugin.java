@@ -1,6 +1,7 @@
 package com.cssbham.cssbuildcompetition;
 
 import com.cssbham.cssbuildcompetition.command.BuildCompetitionAdminCommand;
+import com.cssbham.cssbuildcompetition.command.CompetitionCommand;
 import com.cssbham.cssbuildcompetition.command.TeamCommand;
 import com.cssbham.cssbuildcompetition.game.Competition;
 import com.cssbham.cssbuildcompetition.game.Options;
@@ -19,6 +20,7 @@ public class BuildCompetitionPlugin extends JavaPlugin {
         this.plotSquared = PlotSquared.get();
 
         super.getCommand("team").setExecutor(new TeamCommand(this));
+        super.getCommand("competition").setExecutor(new CompetitionCommand(this));
         super.getCommand("buildcompetitionadmin").setExecutor(new BuildCompetitionAdminCommand(this));
 
         ConfigurationSerialization.registerClass(Options.class);

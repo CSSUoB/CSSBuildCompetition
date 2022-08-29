@@ -1,6 +1,8 @@
 package com.cssbham.cssbuildcompetition.game.phase;
 
 import com.cssbham.cssbuildcompetition.game.Options;
+import com.cssbham.cssbuildcompetition.game.command.CommandHandler;
+import com.cssbham.cssbuildcompetition.game.command.CommandRouter;
 import com.cssbham.cssbuildcompetition.game.team.Team;
 import com.cssbham.cssbuildcompetition.game.team.TeamManager;
 import com.cssbham.cssbuildcompetition.util.PlotSquaredHelper;
@@ -17,12 +19,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public final class BuildPhase extends Phase {
+public final class BuildPhase extends Phase implements CommandHandler {
 
     private final TeamManager teamManager;
     private final PlotArea plotArea;
@@ -90,6 +93,11 @@ public final class BuildPhase extends Phase {
     }
 
     @Override
+    public void registerCommands(@NotNull CommandRouter commandRouter) {
+        commandRouter.registerCommand("home", this);
+    }
+
+    @Override
     public boolean tick() {
         long timeRemaining = endTime - System.currentTimeMillis();
         if (timeRemaining <= 0) {
@@ -106,6 +114,20 @@ public final class BuildPhase extends Phase {
             }
         }
         return false;
+
+
     }
 
+    @Override
+    public boolean handle(Player player, String[] args) {
+        Team team = teamManager.getTeamOfPlayer(player.getUniqueId());
+        if (team == null) {
+            player.sendMessage(Component.text("You are not in a team.", NamedTextColor.RED));
+            return true;
+        }
+
+        Plot plot = plotArea.getPlot(team.getPlotId());
+        plot.getCenter((centre) -> player.teleport(PlotSquaredHelper.convertPlotSquaredLocationToBukkitLocation(centre)));
+        return true;
+    }
 }

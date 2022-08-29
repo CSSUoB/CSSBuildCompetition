@@ -1,6 +1,7 @@
 package com.cssbham.cssbuildcompetition.game.phase;
 
 import com.cssbham.cssbuildcompetition.game.Competition;
+import com.cssbham.cssbuildcompetition.game.command.CommandRouter;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +46,14 @@ public abstract class Phase implements Listener {
      * Called only once when this phase is ending.
      */
     public void end() {
+        // no impl
+    }
+
+    /**
+     * Called when this phase should register its commands
+     * with the competition's {@link CommandRouter}.
+     */
+    public void registerCommands(@NotNull CommandRouter commandRouter) {
         // no impl
     }
 
