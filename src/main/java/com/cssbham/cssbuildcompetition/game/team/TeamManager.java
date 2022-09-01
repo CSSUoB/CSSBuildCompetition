@@ -105,16 +105,9 @@ public class TeamManager {
      * @return the number of teams removed
      */
     public int pruneTeams() {
-        int pruned = 0;
-        Iterator<Team> it = teams.iterator();
-        if (it.hasNext()) {
-            Team team = it.next();
-            if (team.getPlayers().size() == 0) {
-                it.remove();
-                pruned++;
-            }
-        }
-        return pruned;
+        int size = teams.size();
+        teams.removeIf(team -> team.getPlayers().size() == 0);
+        return teams.size() - size;
     }
 
     /**
