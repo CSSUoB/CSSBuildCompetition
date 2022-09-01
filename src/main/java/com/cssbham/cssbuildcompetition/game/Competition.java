@@ -159,10 +159,10 @@ public class Competition {
                 plugin.getLogger().info(String.format("Changing phase from \"%s\" -> \"%s\"", currentPhase.getName(), phase.getName()));
             }
             commandRouter.unregisterCommands();
+            currentPhase = phase;
             phase.start();
             phase.registerCommands(commandRouter);
             Bukkit.getPluginManager().registerEvents(phase, plugin);
-            currentPhase = phase;
             return phase;
         } else {
             plugin.getLogger().info(String.format("Ending phase \"%s\"", currentPhase.getName()));

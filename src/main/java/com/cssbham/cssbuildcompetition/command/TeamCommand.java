@@ -1,6 +1,7 @@
 package com.cssbham.cssbuildcompetition.command;
 
 import com.cssbham.cssbuildcompetition.BuildCompetitionPlugin;
+import com.cssbham.cssbuildcompetition.event.PlayerChangeTeamEvent;
 import com.cssbham.cssbuildcompetition.exception.PlayerNotInTeamException;
 import com.cssbham.cssbuildcompetition.game.Competition;
 import com.cssbham.cssbuildcompetition.game.team.Team;
@@ -102,7 +103,8 @@ public class TeamCommand implements TabExecutor {
         }
 
         if (args.length < 2) {
-            competition.getTeamManager().addPlayerToAvailableTeam(player.getUniqueId());
+            Team team = competition.getTeamManager().addPlayerToAvailableTeam(player.getUniqueId());
+            PlayerChangeTeamEvent.dispatchEvent(player.getUniqueId(), null, team);
         } else {
             String playerName = args[1];
             Player otherPlayer = plugin.getServer().getPlayer(playerName);
@@ -116,6 +118,7 @@ public class TeamCommand implements TabExecutor {
                     player.sendMessage(Component.text(team.getName() + " is full.", NamedTextColor.RED));
                 } else {
                     team.addPlayer(player.getUniqueId());
+                    PlayerChangeTeamEvent.dispatchEvent(player.getUniqueId(), null, team);
                 }
             }
         }
@@ -133,6 +136,7 @@ public class TeamCommand implements TabExecutor {
 
         Team team = competition.getTeamManager().getTeamOfPlayer(player.getUniqueId());
         team.removePlayer(player.getUniqueId());
+        PlayerChangeTeamEvent.dispatchEvent(player.getUniqueId(), team, null);
     }
 
     @Override

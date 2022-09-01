@@ -1,5 +1,6 @@
 package com.cssbham.cssbuildcompetition.game.phase;
 
+import com.cssbham.cssbuildcompetition.event.PlayerChangeTeamEvent;
 import com.cssbham.cssbuildcompetition.game.Options;
 import com.cssbham.cssbuildcompetition.game.command.CommandHandler;
 import com.cssbham.cssbuildcompetition.game.command.CommandRouter;
@@ -20,9 +21,11 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -76,10 +79,12 @@ public final class BuildPhase extends Phase implements CommandHandler {
 
         for (Team team : teamManager.getTeams()) {
             Plot plot = plotArea.getPlot(team.getPlotId());
-            plot.setFlag(ServerPlotFlag.SERVER_PLOT_TRUE);
-            for (UUID uuid : team.getPlayers()) {
-                plot.addTrusted(uuid);
+            if (plot == null) {
+                super.logSevere("Assigned plot " + team.getPlotId().toString() + " for team " + team.getName() + " does not exist!");
+                continue;
             }
+            plot.setFlag(ServerPlotFlag.SERVER_PLOT_TRUE);
+            updatePlotAccessRights(team);
             plot.getCenter((centre) -> {
                 for (UUID uuid : team.getPlayers()) {
                     Player player = Bukkit.getPlayer(uuid);
@@ -105,9 +110,7 @@ public final class BuildPhase extends Phase implements CommandHandler {
 
         for (Team team : teamManager.getTeams()) {
             Plot plot = plotArea.getPlot(team.getPlotId());
-            for (UUID uuid : team.getPlayers()) {
-                plot.removeTrusted(uuid);
-            }
+            clearPlotAccessRights(plot);
         }
     }
 
@@ -133,8 +136,40 @@ public final class BuildPhase extends Phase implements CommandHandler {
             }
         }
         return false;
+    }
 
+    @EventHandler
+    public void onTeamChange(PlayerChangeTeamEvent event) {
+        Team oldTeam = event.getOldTeam();
+        Team newTeam = event.getNewTeam();
+        if (oldTeam != null) {
+            updatePlotAccessRights(oldTeam);
+        }
+        if (newTeam != null) {
+            updatePlotAccessRights(newTeam);
+        }
+    }
 
+    private void clearPlotAccessRights(Plot plot) {
+        super.logInfo("Clearing plot " + plot.getId() + " access rights");
+        for (UUID trusted : new HashSet<>(plot.getTrusted())) {
+            plot.removeTrusted(trusted);
+        }
+    }
+
+    private void updatePlotAccessRights(Team team) {
+        super.logInfo("Updating plot " + team.getPlotId().toString() + " access rights for team " + team.getName());
+        Plot plot = plotArea.getPlot(team.getPlotId());
+        if (plot == null) {
+            super.logSevere("Assigned plot " + team.getPlotId().toString() + " for team " + team.getName() + " does not exist!");
+            return;
+        }
+        for (UUID trusted : new HashSet<>(plot.getTrusted())) {
+            plot.removeTrusted(trusted);
+        }
+        for (UUID trusted : team.getPlayers()) {
+            plot.addTrusted(trusted);
+        }
     }
 
     @Override

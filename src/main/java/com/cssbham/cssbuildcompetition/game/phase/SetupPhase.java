@@ -14,6 +14,7 @@ public final class SetupPhase extends Phase {
 
     @Override
     public void end() {
+        super.logInfo("Locking and pruning teams");
         teamManager.lockTeams();
         teamManager.pruneTeams();
     }

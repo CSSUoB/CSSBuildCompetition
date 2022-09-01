@@ -182,7 +182,9 @@ public final class VotePhase extends Phase {
         long timeRemaining = votingEndTime - System.currentTimeMillis();
         if (timeRemaining <= 0) {
             if (currentTeam != null) {
-                currentTeam.setScore(castVotes.values().stream().mapToInt(Integer::intValue).sum());
+                int totalScore = castVotes.values().stream().mapToInt(Integer::intValue).sum();
+                currentTeam.setScore(totalScore);
+                super.logInfo("Votes added for team " + currentTeam.getName() + ": " + totalScore);
             }
 
             if (!advanceVote()) {
@@ -224,6 +226,7 @@ public final class VotePhase extends Phase {
             currentTeam = next;
             votingEndTime = System.currentTimeMillis() + durationPerVote;
             teleportPlayersToVote(currentTeam);
+            super.logInfo("Voting for team " + currentTeam.getName() + " started");
             return true;
         }
     }

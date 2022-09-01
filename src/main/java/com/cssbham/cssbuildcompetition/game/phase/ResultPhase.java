@@ -49,6 +49,11 @@ public final class ResultPhase extends Phase {
         if (scoreboard.size() == 0) {
             return;
         }
+        super.logInfo("Results:");
+        int place = 1;
+        for (Team team : scoreboard) {
+            super.logInfo(place++ + ". " + team.getName() + " (" + team.getScore() + " points)");
+        }
         Team winner = scoreboard.get(0);
 
         Plot plot = plotArea.getPlot(winner.getPlotId());
@@ -93,7 +98,6 @@ public final class ResultPhase extends Phase {
                 player.playSound(sound, Sound.Emitter.self());
             }
         }
-        Bukkit.getConsoleSender().sendMessage(message);
     }
 
     @Override

@@ -1,14 +1,23 @@
 package com.cssbham.cssbuildcompetition.game.phase;
 
+import com.cssbham.cssbuildcompetition.BuildCompetitionPlugin;
 import com.cssbham.cssbuildcompetition.game.Competition;
 import com.cssbham.cssbuildcompetition.game.command.CommandRouter;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Logger;
+
 /**
  * Represents a phase in a {@link Competition}.
  */
 public abstract class Phase implements Listener {
+
+    private static final Logger logger;
+
+    static {
+        logger = BuildCompetitionPlugin.getPlugin(BuildCompetitionPlugin.class).getLogger();
+    }
 
     /**
      * The name of this phase
@@ -55,6 +64,18 @@ public abstract class Phase implements Listener {
      */
     public void registerCommands(@NotNull CommandRouter commandRouter) {
         // no impl
+    }
+
+    public final void logInfo(@NotNull String message) {
+        logger.info("[" + name + "] " + message);
+    }
+
+    public final void logWarning(@NotNull String message) {
+        logger.warning("[" + name + "] " + message);
+    }
+
+    public final void logSevere(@NotNull String message) {
+        logger.severe("[" + name + "] " + message);
     }
 
 }
