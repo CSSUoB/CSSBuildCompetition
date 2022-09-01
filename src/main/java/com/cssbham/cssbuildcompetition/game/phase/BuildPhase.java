@@ -54,12 +54,33 @@ public final class BuildPhase extends Phase implements CommandHandler {
         timer = BossBar.bossBar(Component.text("XX remaining"),
                 1, BossBar.Color.PURPLE, BossBar.Overlay.NOTCHED_10);
 
+        for (Team team : teamManager.getTeams()) {
+            Plot plot = plotArea.getPlot(team.getPlotId());
+            if (plot == null) {
+                super.logSevere("Assigned plot " + team.getPlotId().toString() + " for team " + team.getName() + " does not exist!");
+                continue;
+            }
+            plot.setFlag(ServerPlotFlag.SERVER_PLOT_TRUE);
+            updatePlotAccessRights(team);
+            plot.getCenter((centre) -> {
+                for (UUID uuid : team.getPlayers()) {
+                    Player player = Bukkit.getPlayer(uuid);
+                    if (player != null) {
+                        player.teleport(PlotSquaredHelper.convertPlotSquaredLocationToBukkitLocation(centre));
+                        introducePlayer(player);
+                    }
+                }
+            });
+        }
+    }
+
+    private void introducePlayer(Player player) {
         Component message = Component.newline()
                 .append(Component.text("Time to build!", NamedTextColor.GREEN, TextDecoration.BOLD))
                 .append(Component.newline())
                 .append(Component.newline())
                 .append(Component.text("You have ", NamedTextColor.GREEN))
-                .append(Component.text(TimeFormat.convertToHoursMinutes(duration), NamedTextColor.WHITE))
+                .append(Component.text(TimeFormat.convertToOptionalHumanReadableTime(duration), NamedTextColor.WHITE))
                 .append(Component.text(" to build according to the theme: ", NamedTextColor.GREEN))
                 .append(Component.text(theme, NamedTextColor.WHITE))
                 .append(Component.text(".", NamedTextColor.GREEN))
@@ -77,26 +98,9 @@ public final class BuildPhase extends Phase implements CommandHandler {
                 Component.text("Theme: " + theme, NamedTextColor.GRAY),
                 Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(5000), Duration.ofMillis(500)));
 
-        for (Team team : teamManager.getTeams()) {
-            Plot plot = plotArea.getPlot(team.getPlotId());
-            if (plot == null) {
-                super.logSevere("Assigned plot " + team.getPlotId().toString() + " for team " + team.getName() + " does not exist!");
-                continue;
-            }
-            plot.setFlag(ServerPlotFlag.SERVER_PLOT_TRUE);
-            updatePlotAccessRights(team);
-            plot.getCenter((centre) -> {
-                for (UUID uuid : team.getPlayers()) {
-                    Player player = Bukkit.getPlayer(uuid);
-                    if (player != null) {
-                        player.teleport(PlotSquaredHelper.convertPlotSquaredLocationToBukkitLocation(centre));
-                        player.showTitle(title);
-                        player.playSound(sound, Sound.Emitter.self());
-                        player.sendMessage(message);
-                    }
-                }
-            });
-        }
+        player.showTitle(title);
+        player.playSound(sound, Sound.Emitter.self());
+        player.sendMessage(message);
     }
 
     @Override
@@ -110,6 +114,10 @@ public final class BuildPhase extends Phase implements CommandHandler {
 
         for (Team team : teamManager.getTeams()) {
             Plot plot = plotArea.getPlot(team.getPlotId());
+            if (plot == null) {
+                super.logSevere("Assigned plot " + team.getPlotId().toString() + " for team " + team.getName() + " does not exist!");
+                continue;
+            }
             clearPlotAccessRights(plot);
         }
     }
@@ -147,6 +155,12 @@ public final class BuildPhase extends Phase implements CommandHandler {
         }
         if (newTeam != null) {
             updatePlotAccessRights(newTeam);
+        }
+
+        Player player = Bukkit.getPlayer(event.getPlayer());
+        // player joined for first time
+        if (player != null && oldTeam == null && newTeam != null) {
+            introducePlayer(player);
         }
     }
 

@@ -1,5 +1,8 @@
 package com.cssbham.cssbuildcompetition.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TimeFormat {
 
     /**
@@ -13,17 +16,17 @@ public class TimeFormat {
         int m = (int) ((milliseconds / (1000*60)) % 60);
         int h = (int) ((milliseconds / (1000*60*60)) % 24);
 
-        StringBuilder sb = new StringBuilder();
+        List<String> time = new ArrayList<>();
         if (h > 0) {
-            sb.append(h).append(" hour").append(h != 1 ? "s " : " ");
+            time.add(h + " hour" + (h != 1 ? "s" : ""));
         }
         if (h > 0 || m > 0) {
-            sb.append(m).append(" minute").append(m != 1 ? "s " : " ");
+            time.add(m + " minute" + (m != 1 ? "s" : ""));
         }
         if (h == 0) {
-            sb.append(s).append(" second").append(s != 1 ? "s" : "");
+            time.add(s + " second" + (s != 1 ? "s" : ""));
         }
-        return sb.toString();
+        return String.join(" ", time);
     }
 
     /**
@@ -32,19 +35,23 @@ public class TimeFormat {
      * @param milliseconds the time in milliseconds
      * @return the formatted time
      */
-    public static String convertToHoursMinutes(long milliseconds) {
+                         // makes no sense and I don't care
+    public static String convertToOptionalHumanReadableTime(long milliseconds) {
         int s = (int) (milliseconds / 1000) % 60;
         int m = (int) ((milliseconds / (1000*60)) % 60);
         int h = (int) ((milliseconds / (1000*60*60)) % 24);
 
-        StringBuilder sb = new StringBuilder();
+        List<String> time = new ArrayList<>();
         if (h > 0) {
-            sb.append(h).append(" hour").append(h != 1 ? "s " : " ");
+            time.add(h + " hour" + (h != 1 ? "s" : ""));
         }
-        if (h > 0 || m > 0) {
-            sb.append(m).append(" minute").append(m != 1 ? "s" : "");
+        if (m > 0) {
+            time.add(m + " minute" + (m != 1 ? "s" : ""));
         }
-        return sb.toString();
+        if (s > 0) {
+            time.add(s + " second" + (s != 1 ? "s" : ""));
+        }
+        return String.join(" ", time);
     }
 
 }

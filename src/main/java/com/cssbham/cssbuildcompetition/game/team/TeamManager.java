@@ -25,6 +25,8 @@ public class TeamManager {
         this.plotArea = plotArea;
         this.limit = limit;
         teams = new ArrayList<>();
+        leavingAllowed = true;
+        joiningAllowed = true;
     }
 
     /**

@@ -142,7 +142,7 @@ public final class VotePhase extends Phase {
                 .append(Component.newline())
                 .append(Component.newline())
                 .append(Component.text("You have ", NamedTextColor.GREEN))
-                .append(Component.text(TimeFormat.convertToHumanReadableTime(durationPerVote), NamedTextColor.WHITE))
+                .append(Component.text(TimeFormat.convertToOptionalHumanReadableTime(durationPerVote), NamedTextColor.WHITE))
                 .append(Component.text(" per team to vote from ", NamedTextColor.GREEN))
                 .append(Component.text("1 to 5", NamedTextColor.WHITE))
                 .append(Component.text(" by right-clicking the option in your hand.", NamedTextColor.GREEN))

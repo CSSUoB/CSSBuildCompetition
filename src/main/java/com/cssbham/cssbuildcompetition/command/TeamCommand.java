@@ -129,7 +129,7 @@ public class TeamCommand implements TabExecutor {
 
         Competition competition = plugin.getCompetition();
 
-        if (!plugin.getCompetition().getTeamManager().isLeavingAllowed()) {
+        if (!competition.getTeamManager().isLeavingAllowed()) {
             player.sendMessage(Component.text("Leaving teams is disallowed at this stage of the competition.", NamedTextColor.RED));
             return;
         }
