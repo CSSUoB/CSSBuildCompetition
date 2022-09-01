@@ -16,7 +16,8 @@ public class TeamManager {
     private final PlayerRegistry playerRegistry;
     private final List<Team> teams;
     private final PlotArea plotArea;
-    private boolean locked;
+    private boolean leavingAllowed;
+    private boolean joiningAllowed;
     private final int limit;
 
     public TeamManager(PlayerRegistry playerRegistry, PlotArea plotArea, int limit) {
@@ -121,21 +122,19 @@ public class TeamManager {
         return playerRegistry;
     }
 
-    /**
-     * Locks the teams. This has no effect other than making {@link #isLocked()}
-     * return true.
-     */
-    public void lockTeams() {
-        locked = true;
+    public boolean isLeavingAllowed() {
+        return leavingAllowed;
     }
 
-    /**
-     * Gets if the teams are locked. If the teams are locked then players should
-     * be prohibited from leaving or joining new teams.
-     *
-     * @return true if the teams are locked, false otherwise
-     */
-    public boolean isLocked() {
-        return locked;
+    public void setLeavingAllowed(boolean leavingAllowed) {
+        this.leavingAllowed = leavingAllowed;
+    }
+
+    public boolean isJoiningAllowed() {
+        return joiningAllowed;
+    }
+
+    public void setJoiningAllowed(boolean joiningAllowed) {
+        this.joiningAllowed = joiningAllowed;
     }
 }

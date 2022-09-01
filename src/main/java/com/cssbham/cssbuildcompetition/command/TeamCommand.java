@@ -92,8 +92,8 @@ public class TeamCommand implements TabExecutor {
     public void handleJoin(String[] args, Player player) {
         Competition competition = plugin.getCompetition();
 
-        if (competition.getTeamManager().isLocked()) {
-            player.sendMessage(Component.text("The teams have been locked.", NamedTextColor.RED));
+        if (!competition.getTeamManager().isJoiningAllowed()) {
+            player.sendMessage(Component.text("Joining teams is disallowed at this stage of the competition.", NamedTextColor.RED));
             return;
         }
 
@@ -129,8 +129,8 @@ public class TeamCommand implements TabExecutor {
 
         Competition competition = plugin.getCompetition();
 
-        if (plugin.getCompetition().getTeamManager().isLocked()) {
-            player.sendMessage(Component.text("The teams have been locked.", NamedTextColor.RED));
+        if (!plugin.getCompetition().getTeamManager().isLeavingAllowed()) {
+            player.sendMessage(Component.text("Leaving teams is disallowed at this stage of the competition.", NamedTextColor.RED));
             return;
         }
 

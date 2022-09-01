@@ -128,6 +128,9 @@ public final class VotePhase extends Phase {
 
     @Override
     public void start() {
+        super.logInfo("Disallowing team joining");
+        teamManager.setJoiningAllowed(false);
+
         upcomingTeams.clear();
         bossbars.clear();
         castVotes.clear();
