@@ -70,7 +70,9 @@ public class BuildCompetitionAdminCommand implements TabExecutor {
     }
 
     public void handleInfo(String[] args, CommandSender sender) {
-        CommandPreconditions.requireCompetition(plugin);
+        if (plugin.getCompetition() == null) {
+            CommandPreconditions.requireCompetition(plugin);
+        }
 
         if (args.length < 2) {
             sender.sendMessage("/bca info <phase|teams|score>");
